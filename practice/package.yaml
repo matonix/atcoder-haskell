@@ -1,0 +1,20 @@
+name:                practice
+version:             0.1.0.0
+github:              "matonix/atcoder"
+license:             BSD3
+author:              "maton"
+maintainer:          "automatonix@gmail.com"
+copyright:           "Haruki Yokoyama"
+description:         Please see the README on GitHub at <https://github.com/matonix/atcoder>
+
+ghc-options:
+- -threaded
+- -rtsopts
+- -with-rtsopts=-N
+
+executables:
+  a:
+    main:                Main.hs
+    source-dirs:         a
+    dependencies:
+    - base >= 4.7 && < 5
