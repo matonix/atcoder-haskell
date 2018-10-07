@@ -1,0 +1,151 @@
+{-# START_FILE package.yaml #-}
+name:                {{name}}
+version:             0.1.0.0
+license:             BSD3
+author:              {{author-name}}{{^author-name}}Author name here{{/author-name}}
+maintainer:          {{author-email}}{{^author-email}}example@example.com{{/author-email}}
+
+dependencies:
+- base >= 4.7 && < 5
+
+ghc-options:
+- -threaded
+- -rtsopts
+- -with-rtsopts=-N
+
+executables:
+  a:
+    main:                Main.hs
+    source-dirs:         a
+
+executables:
+  b:
+    main:                Main.hs
+    source-dirs:         b
+
+executables:
+  c:
+    main:                Main.hs
+    source-dirs:         c
+
+executables:
+  d:
+    main:                Main.hs
+    source-dirs:         d
+
+{-# START_FILE Setup.hs #-}
+import Distribution.Simple
+main = defaultMain
+
+{-# START_FILE Makefile #-}
+.PHONY: a b c d
+a:
+	cd a && make
+b:
+	cd b && make
+c:
+	cd c && make
+d:
+	cd d && make
+
+clean:
+	cd a && make clean
+	cd b && make clean
+	cd c && make clean
+	cd d && make clean
+
+{-# START_FILE a/input #-}
+{-# START_FILE a/expect #-}
+{-# START_FILE a/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "a"
+
+{-# START_FILE a/Makefile #-}
+.PHONY: Main output
+all: Main output
+	diff expect output
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+output:
+	./Main < input > output
+
+.PHONY: clean
+clean:
+	rm -f Main output Main.hi Main.o
+
+{-# START_FILE b/input #-}
+{-# START_FILE b/expect #-}
+{-# START_FILE b/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "b"
+
+{-# START_FILE b/Makefile #-}
+.PHONY: Main output
+all: Main output
+	diff expect output
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+output:
+	./Main < input > output
+
+.PHONY: clean
+clean:
+	rm -f Main output Main.hi Main.o
+
+{-# START_FILE c/input #-}
+{-# START_FILE c/expect #-}
+{-# START_FILE c/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "c"
+
+{-# START_FILE c/Makefile #-}
+.PHONY: Main output
+all: Main output
+	diff expect output
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+output:
+	./Main < input > output
+
+.PHONY: clean
+clean:
+	rm -f Main output Main.hi Main.o
+
+{-# START_FILE d/input #-}
+{-# START_FILE d/expect #-}
+{-# START_FILE d/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "d"
+
+{-# START_FILE d/Makefile #-}
+.PHONY: Main output
+all: Main output
+	diff expect output
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+output:
+	./Main < input > output
+
+.PHONY: clean
+clean:
+	rm -f Main output Main.hi Main.o

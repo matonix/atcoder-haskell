@@ -4,8 +4,9 @@ github:              "matonix/atcoder"
 license:             BSD3
 author:              "maton"
 maintainer:          "automatonix@gmail.com"
-copyright:           "Haruki Yokoyama"
-description:         Please see the README on GitHub at <https://github.com/matonix/atcoder>
+
+dependencies:
+- base >= 4.7 && < 5
 
 ghc-options:
 - -threaded
@@ -16,5 +17,18 @@ executables:
   a:
     main:                Main.hs
     source-dirs:         a
-    dependencies:
-    - base >= 4.7 && < 5
+
+executables:
+  b:
+    main:                Main.hs
+    source-dirs:         b
+
+executables:
+  c:
+    main:                Main.hs
+    source-dirs:         c
+
+executables:
+  d:
+    main:                Main.hs
+    source-dirs:         d
