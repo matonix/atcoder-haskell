@@ -74,7 +74,7 @@ Main:
 
 .PHONY: clean
 clean:
-	rm -f Main output Main.hi Main.o
+	rm -f Main output* Main.hi Main.o
 
 {-# START_FILE b/input1 #-}
 {-# START_FILE b/input2 #-}
@@ -100,7 +100,7 @@ Main:
 
 .PHONY: clean
 clean:
-	rm -f Main output Main.hi Main.o
+	rm -f Main output* Main.hi Main.o
 
 {-# START_FILE c/input1 #-}
 {-# START_FILE c/input2 #-}
@@ -126,7 +126,7 @@ Main:
 
 .PHONY: clean
 clean:
-	rm -f Main output Main.hi Main.o
+	rm -f Main output* Main.hi Main.o
 
 {-# START_FILE d/input1 #-}
 {-# START_FILE d/input2 #-}
@@ -152,5 +152,5 @@ Main:
 
 .PHONY: clean
 clean:
-	rm -f Main output Main.hi Main.o
+	rm -f Main output* Main.hi Main.o
 
