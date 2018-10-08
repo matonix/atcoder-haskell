@@ -5,6 +5,8 @@ license:             BSD3
 author:              {{author-name}}{{^author-name}}Author name here{{/author-name}}
 maintainer:          {{author-email}}{{^author-email}}example@example.com{{/author-email}}
 
+source-dirs: .
+
 dependencies:
 - base >= 4.7 && < 5
 
@@ -17,18 +19,12 @@ executables:
   a:
     main:                Main.hs
     source-dirs:         a
-
-executables:
   b:
     main:                Main.hs
     source-dirs:         b
-
-executables:
   c:
     main:                Main.hs
     source-dirs:         c
-
-executables:
   d:
     main:                Main.hs
     source-dirs:         d
@@ -54,8 +50,10 @@ clean:
 	cd c && make clean
 	cd d && make clean
 
-{-# START_FILE a/input #-}
-{-# START_FILE a/expect #-}
+{-# START_FILE a/input1 #-}
+{-# START_FILE a/input2 #-}
+{-# START_FILE a/expect1 #-}
+{-# START_FILE a/expect2 #-}
 {-# START_FILE a/Main.hs #-}
 module Main where
 
@@ -64,22 +62,24 @@ main = do
   putStrLn "a"
 
 {-# START_FILE a/Makefile #-}
-.PHONY: Main output
-all: Main output
-	diff expect output
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
-
-output:
-	./Main < input > output
 
 .PHONY: clean
 clean:
 	rm -f Main output Main.hi Main.o
 
-{-# START_FILE b/input #-}
-{-# START_FILE b/expect #-}
+{-# START_FILE b/input1 #-}
+{-# START_FILE b/input2 #-}
+{-# START_FILE b/expect1 #-}
+{-# START_FILE b/expect2 #-}
 {-# START_FILE b/Main.hs #-}
 module Main where
 
@@ -88,22 +88,24 @@ main = do
   putStrLn "b"
 
 {-# START_FILE b/Makefile #-}
-.PHONY: Main output
-all: Main output
-	diff expect output
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
-
-output:
-	./Main < input > output
 
 .PHONY: clean
 clean:
 	rm -f Main output Main.hi Main.o
 
-{-# START_FILE c/input #-}
-{-# START_FILE c/expect #-}
+{-# START_FILE c/input1 #-}
+{-# START_FILE c/input2 #-}
+{-# START_FILE c/expect1 #-}
+{-# START_FILE c/expect2 #-}
 {-# START_FILE c/Main.hs #-}
 module Main where
 
@@ -112,22 +114,24 @@ main = do
   putStrLn "c"
 
 {-# START_FILE c/Makefile #-}
-.PHONY: Main output
-all: Main output
-	diff expect output
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
-
-output:
-	./Main < input > output
 
 .PHONY: clean
 clean:
 	rm -f Main output Main.hi Main.o
 
-{-# START_FILE d/input #-}
-{-# START_FILE d/expect #-}
+{-# START_FILE d/input1 #-}
+{-# START_FILE d/input2 #-}
+{-# START_FILE d/expect1 #-}
+{-# START_FILE d/expect2 #-}
 {-# START_FILE d/Main.hs #-}
 module Main where
 
@@ -136,16 +140,17 @@ main = do
   putStrLn "d"
 
 {-# START_FILE d/Makefile #-}
-.PHONY: Main output
-all: Main output
-	diff expect output
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
 
-output:
-	./Main < input > output
-
 .PHONY: clean
 clean:
 	rm -f Main output Main.hi Main.o
+
