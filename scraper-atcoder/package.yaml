@@ -31,6 +31,7 @@ dependencies:
 - xml-conduit
 - xml-lens
 - lens
+- makefile
 
 ghc-options:
 - -Wall

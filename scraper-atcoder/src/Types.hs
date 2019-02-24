@@ -7,7 +7,7 @@ import RIO.Process
 -- | Command line arguments
 data Options = Options
   { optionsVerbose :: !Bool
-  , problem :: !String
+  , contest :: !String
   }
 
 data App = App
