@@ -2,6 +2,6 @@
 *.cabal
 *~
 *.out
-output
 *.hi
 *.o
+Main
