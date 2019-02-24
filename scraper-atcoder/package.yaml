@@ -43,7 +43,7 @@ library:
   source-dirs: src
 
 executables:
-  scraper-atcoder-exe:
+  scraper-atcoder:
     main:                Main.hs
     source-dirs:         app
     dependencies:
