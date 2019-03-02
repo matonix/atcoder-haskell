@@ -2,7 +2,6 @@ module Types where
 
 import RIO
 import RIO.Process
-import qualified RIO.Text as T
 
 -- | Command line arguments
 data Options = Options
