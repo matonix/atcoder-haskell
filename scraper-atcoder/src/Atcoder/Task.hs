@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Atcoder.Task
-  ( readTasks
+  ( readTasksWithAuth
+  , readTasks
   , getTasks
   , Task(..)
   ) where
@@ -21,6 +22,18 @@ data Task = Task
   } deriving (Show, Eq)
 
 -- * Exported Functions
+
+readTasksWithAuth 
+  :: Maybe ByteString
+  -> Maybe ByteString 
+  -> String 
+  -> IO [Task]
+readTasksWithAuth (Just username) (Just password) tasksUrl = do
+  req <- H.parseRequest tasksUrl
+  let req' = H.setRequestBasicAuth username password req
+  res <- H.httpLBS req'
+  return $ getTasks $ DOM.parseLBS $ H.getResponseBody res
+readTasksWithAuth _ _ tasksUrl = readTasks tasksUrl
 
 readTasks :: String -> IO [Task]
 readTasks tasksUrl = do

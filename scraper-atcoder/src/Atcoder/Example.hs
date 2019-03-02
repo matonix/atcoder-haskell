@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Atcoder.Example
-  ( readExamples
+  ( readExamplesWithAuth
+  , readExamples
   , getExamples
   , writeExamples
   , writeExamples_
@@ -20,7 +21,21 @@ data Example = Example
   , expect :: Text
   } deriving (Show, Eq)
 
+type Auth = (ByteString, ByteString)
+
 -- * Exported Functions
+
+readExamplesWithAuth
+  :: Maybe ByteString
+  -> Maybe ByteString 
+  -> String 
+  -> IO [Example]
+readExamplesWithAuth (Just username) (Just password) examplesUrl = do
+  req <- H.parseRequest examplesUrl
+  let req' = H.setRequestBasicAuth username password req
+  res <- H.httpLBS req'
+  return $ getExamples $ DOM.parseLBS $ H.getResponseBody res
+readExamplesWithAuth _ _ examplesUrl = readExamples examplesUrl
 
 readExamples :: String -> IO [Example]
 readExamples url = do

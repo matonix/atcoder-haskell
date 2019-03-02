@@ -2,11 +2,14 @@ module Types where
 
 import RIO
 import RIO.Process
+import qualified RIO.Text as T
 
 -- | Command line arguments
 data Options = Options
-  { optionsVerbose :: !Bool
-  , contest :: !String
+  { optionsVerbose :: Bool
+  , contest :: String
+  , username :: Maybe ByteString
+  , password :: Maybe ByteString
   }
 
 data App = App

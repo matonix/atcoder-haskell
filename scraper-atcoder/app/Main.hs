@@ -20,8 +20,21 @@ main = do
         <> help "Verbose output?"
         )
       <*> strArgument 
-        ( metavar "URL" <> help "Problem URL"
+        ( metavar "URL" 
+        <> help "Problem URL"
         )
+      <*> (optional $ strOption
+        ( long "username"
+        <> short 'u'
+        <> help "Username"
+        <> metavar "USERNAME"
+        ))
+      <*> (optional $ strOption
+        ( long "password"
+        <> short 'p'
+        <> help "Password"
+        <> metavar "PASSWORD"
+        ))
     )
     empty
   lo <- logOptionsHandle stderr (optionsVerbose options)
