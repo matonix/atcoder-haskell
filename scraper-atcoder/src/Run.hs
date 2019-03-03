@@ -31,7 +31,7 @@ runByURL contestUrl = do
   let contestPath = cwd </> contestName
   liftIO $ createDirectory contestPath
   let tasksUrl = contestUrl </> "tasks"
-  tasks <- liftIO $ readTasksWithAuth maybeUsername maybePassword tasksUrl
+  tasks <- liftIO $ createTasksWithAuth maybeUsername maybePassword tasksUrl
   forM_ tasks $ \(Task taskName taskUrl) -> do
     logInfo $ "  Create task directory: " <> display taskName
     let taskPath = contestPath </> T.unpack taskName
@@ -40,7 +40,7 @@ runByURL contestUrl = do
     liftIO $ writeFileUtf8 (taskPath </> "Main.hs") emptyMain
     logInfo "    Create examples"
     logDebug $ "      Read " <> fromString taskUrl
-    examples <- liftIO $ readExamplesWithAuth maybeUsername maybePassword taskUrl
+    examples <- liftIO $ createExamplesWithAuth maybeUsername maybePassword taskUrl
     logDebug $ "      Examples is here: " <> fromString (show examples)
     result <- liftIO $ writeExamples taskPath examples
     logDebug $ "      Wrote in: " <> fromString (show result)

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Atcoder.Example
-  ( readExamplesWithAuth
-  , readExamples
+  ( createExamplesWithAuth
+  , createExamples
   , getExamples
   , writeExamples
   , writeExamples_
@@ -23,20 +23,20 @@ data Example = Example
 
 -- * Exported Functions
 
-readExamplesWithAuth
+createExamplesWithAuth
   :: Maybe ByteString
-  -> Maybe ByteString 
-  -> String 
+  -> Maybe ByteString
+  -> String
   -> IO [Example]
-readExamplesWithAuth (Just username) (Just password) examplesUrl = do
+createExamplesWithAuth (Just username) (Just password) examplesUrl = do
   req <- H.parseRequest examplesUrl
   let req' = H.setRequestBasicAuth username password req
   res <- H.httpLBS req'
   return $ getExamples $ DOM.parseLBS $ H.getResponseBody res
-readExamplesWithAuth _ _ examplesUrl = readExamples examplesUrl
+createExamplesWithAuth _ _ examplesUrl = createExamples examplesUrl
 
-readExamples :: String -> IO [Example]
-readExamples url = do
+createExamples :: String -> IO [Example]
+createExamples url = do
   req <- H.parseRequest url
   res <- H.httpLBS req
   return $ getExamples $ DOM.parseLBS $ H.getResponseBody res
@@ -45,7 +45,7 @@ getExamples :: Document -> [Example]
 getExamples = makeExample . makePairs . map toLF . docToTexts
 
 writeExamples :: FilePath -> [Example] -> IO [(FilePath, FilePath)]
-writeExamples fp es = forM (zip [(1::Int)..] es) $ 
+writeExamples fp es = forM (zip [(1::Int)..] es) $
   \(n, Example i e) -> do
     let iFile = fp </> show n <.> "input"
     let eFile = fp </> show n <.> "expect"
@@ -59,12 +59,12 @@ writeExamples_ fp = void . writeExamples fp
 -- * Unexported Functions
 
 docToTexts :: Document -> [Text]
-docToTexts doc = doc 
-  ^.. root 
-  . entire 
-  ./ attributeIs "class" "lang-ja" 
-  ./ attributeIs "class" "part" 
-  ./ el "section" 
+docToTexts doc = doc
+  ^.. root
+  . entire
+  ./ attributeIs "class" "lang-ja"
+  ./ attributeIs "class" "part"
+  ./ el "section"
   ./ (el "h3" <> el "pre")
   . text
 
