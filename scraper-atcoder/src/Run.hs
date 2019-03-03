@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 module Run (run) where
 
+import Data.Monoid
 import RIO.Directory
 import RIO.FilePath
 import qualified RIO.Text as T
@@ -9,7 +11,18 @@ import Util
 
 run :: RIO App ()
 run = do
-  contestUrl <- contest . appOptions <$> ask
+  Options{..} <- appOptions <$> ask
+  -- align actions and run first action
+  fromFirst (logError "no option")
+    $ First (fmap runByURL contest)
+    <> First (fmap runByFiles files)
+
+runByFiles :: [String] -> RIO App ()
+runByFiles filepaths = 
+  logInfo $ fromString $ unlines filepaths
+
+runByURL :: String -> RIO App ()
+runByURL contestUrl = do
   let contestName = getFinalPart contestUrl
   logInfo $ "Create contest directory: " <> fromString contestName
   cwd <- liftIO $ getCurrentDirectory

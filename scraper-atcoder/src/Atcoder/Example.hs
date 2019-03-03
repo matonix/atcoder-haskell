@@ -21,8 +21,6 @@ data Example = Example
   , expect :: Text
   } deriving (Show, Eq)
 
-type Auth = (ByteString, ByteString)
-
 -- * Exported Functions
 
 readExamplesWithAuth

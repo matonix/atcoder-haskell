@@ -19,10 +19,18 @@ main = do
         <> short 'v'
         <> help "Verbose output?"
         )
-      <*> strArgument 
-        ( metavar "URL" 
+      <*> (optional $ option (str >>= parseStringList) 
+        ( long "files"
+        <> short 'f'
+        <> help "Problem HTML files"
+        <> metavar "TASKS_FILEPATH TASK1_FILEPATH ..." 
+        ))
+      <*> (optional $ strOption 
+        ( long "url"
+        <> short 'r'
         <> help "Problem URL"
-        )
+        <> metavar "URL" 
+        ))
       <*> (optional $ strOption
         ( long "username"
         <> short 'u'
@@ -46,3 +54,6 @@ main = do
           , appOptions = options
           }
      in runRIO app run
+
+parseStringList :: Monad m => String -> m [String]
+parseStringList = return . words
