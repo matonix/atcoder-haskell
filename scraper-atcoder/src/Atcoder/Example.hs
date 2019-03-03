@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Atcoder.Example
-  ( createExamplesWithAuth
+  ( readExamples
+  , createExamplesWithAuth
   , createExamples
   , getExamples
   , writeExamples
@@ -23,6 +24,9 @@ data Example = Example
 
 -- * Exported Functions
 
+readExamples :: FilePath -> IO [Example]
+readExamples filepath = getExamplesLocal <$> DOM.readFile filepath
+
 createExamplesWithAuth
   :: Maybe ByteString
   -> Maybe ByteString
@@ -43,6 +47,9 @@ createExamples url = do
 
 getExamples :: Document -> [Example]
 getExamples = makeExample . makePairs . map toLF . docToTexts
+
+getExamplesLocal :: Document -> [Example]
+getExamplesLocal = makeExample . makePairs . map toLF . docToTexts
 
 writeExamples :: FilePath -> [Example] -> IO [(FilePath, FilePath)]
 writeExamples fp es = forM (zip [(1::Int)..] es) $
@@ -74,7 +81,7 @@ toLF = T.filter (/= '\r')
 makePairs :: [Text] -> [(Text, Text)]
 makePairs = toPair . dropWhile isInput1
   where
-    isInput1 = maybe False ((/= '1') . fst) . T.uncons . T.reverse
+    isInput1 = maybe False ((/= '1') . fst) . T.uncons . T.stripStart . T.reverse
     toPair [] = []
     toPair [_] = []
     toPair (x : y : xs) = (x, y) : toPair xs

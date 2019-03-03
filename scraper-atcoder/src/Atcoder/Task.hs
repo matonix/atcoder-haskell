@@ -17,8 +17,8 @@ import qualified Text.HTML.DOM as DOM
 import Util
 
 data Task = Task
-  { name :: Text
-  , url :: String
+  { taskName :: Text
+  , taskUrl :: String
   } deriving (Show, Eq)
 
 -- * Exported Functions
@@ -57,15 +57,14 @@ docToUrls doc = doc
   ./ attr "href"
 
 makeTask :: Text -> Task
-makeTask relPath = let
-  taskUrl = "https://atcoder.jp" ++ T.unpack relPath
-  taskName = tgetFinalPart relPath
-  in Task taskName taskUrl
+makeTask relPath = Task
+  (tgetFinalPart relPath)
+  ("https://atcoder.jp" ++ T.unpack relPath)
 
 dropCommonPrefix :: [Task] -> [Task]
-dropCommonPrefix tasks = zipWith Task suffixes $ map url tasks
+dropCommonPrefix tasks = zipWith Task suffixes $ map taskUrl tasks
   where
-    suffixes = go $ map (T.unpack . name) tasks
+    suffixes = go $ map (T.unpack . taskName) tasks
     go [] = []
     go tss'@(ts : tss)
       | any ((< 2) . length) tss' = map T.pack tss'

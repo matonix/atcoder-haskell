@@ -19,11 +19,17 @@ main = do
         <> short 'v'
         <> help "Verbose output?"
         )
+      <*> (optional $ strOption 
+        ( long "contest"
+        <> short 'c'
+        <> help "Contest name"
+        <> metavar "CONTEST_NAME"
+        ))
       <*> (optional $ option (str >>= parseStringList) 
         ( long "files"
         <> short 'f'
         <> help "Problem HTML files"
-        <> metavar "TASKS_FILEPATH TASK1_FILEPATH ..." 
+        <> metavar "\"TASK1_FILEPATH ...\""
         ))
       <*> (optional $ strOption 
         ( long "url"
@@ -42,8 +48,7 @@ main = do
         <> short 'p'
         <> help "Password"
         <> metavar "PASSWORD"
-        ))
-    )
+        )))
     empty
   lo <- logOptionsHandle stderr (optionsVerbose options)
   pc <- mkDefaultProcessContext

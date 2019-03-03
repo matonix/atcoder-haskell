@@ -14,12 +14,37 @@ run = do
   Options{..} <- appOptions <$> ask
   -- align actions and run first action
   fromFirst (logError "no option")
-    $ First (fmap runByURL contest)
+    $ First (fmap runByURL url)
     <> First (fmap runByFiles files)
 
 runByFiles :: [String] -> RIO App ()
-runByFiles filepaths = 
-  logInfo $ fromString $ unlines filepaths
+runByFiles taskHtmlPaths = do
+  contestName <- fromMaybe "noname" . contest . appOptions <$> ask
+  logInfo $ "Create contest directory: " <> fromString contestName
+  cwd <- liftIO $ getCurrentDirectory
+  let contestPath = cwd </> contestName
+  liftIO $ createDirectory contestPath
+  taskNames <- forM taskHtmlPaths $ \taskHtmlPath -> do
+    let taskName = takeBaseName taskHtmlPath
+    logInfo $ "  Create task directory: " <> fromString taskName
+    let taskPath = contestPath </> taskName
+    liftIO $ createDirectory taskPath
+    logInfo "    Create empty Main.hs"
+    liftIO $ writeFileUtf8 (taskPath </> "Main.hs") emptyMain
+    logInfo "    Create examples"
+    logInfo $ "      Read " <> fromString taskHtmlPath
+    examples <- liftIO $ readExamples taskHtmlPath
+    logInfo $ "      Examples is here: " <> fromString (show examples)
+    result <- liftIO $ writeExamples taskPath examples
+    logInfo $ "      Wrote in: " <> fromString (show result)
+    logInfo "    Create Makefile"
+    liftIO $ writeMakefile (taskPath </> "Makefile") (taskMakefile $ length examples)
+    logInfo $ "Create contest directory: " <> fromString contestName
+    return $ fromString taskName
+  logInfo "Create Makefile for all tasks"
+  liftIO $ writeMakefile (contestPath </> "Makefile") (tasksMakefile taskNames)
+  logInfo "Done."
+
 
 runByURL :: String -> RIO App ()
 runByURL contestUrl = do
@@ -48,5 +73,5 @@ runByURL contestUrl = do
     liftIO $ writeMakefile (taskPath </> "Makefile") (taskMakefile $ length examples)
     logInfo $ "Create contest directory: " <> fromString contestName
   logInfo "Create Makefile for all tasks"
-  liftIO $ writeMakefile (contestPath </> "Makefile") (tasksMakefile $ map name tasks)
+  liftIO $ writeMakefile (contestPath </> "Makefile") (tasksMakefile $ map taskName tasks)
   logInfo "Done."
