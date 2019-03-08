@@ -1,4 +1,4 @@
-module Data.UnionFind where
+module Data.UnionFind.Array where
 
 import Data.Array.IO
 

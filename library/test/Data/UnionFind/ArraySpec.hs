@@ -1,7 +1,7 @@
-module Data.UnionFindSpec where
+module Data.UnionFind.ArraySpec where
 
 import Data.Array.IO
-import Data.UnionFind
+import Data.UnionFind.Array
 import Test.Hspec
 
 main :: IO ()
