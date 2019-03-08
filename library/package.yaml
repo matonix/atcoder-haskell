@@ -1,0 +1,29 @@
+name: library
+version: '0.1.0'
+category: Web
+author: maton
+maintainer: automatonix@gmail.com
+copyright: Haruki Yokoyama
+license: BSD3
+
+# dependencies are restricted in haskell-platform 2014
+dependencies:
+- base >=4.7 && <5
+- array
+
+ghc-options:
+- -Wall
+- -threaded
+- -rtsopts
+- -with-rtsopts=-N
+
+library:
+  source-dirs: src
+
+tests:
+  library-test:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+    - library
+    - hspec
