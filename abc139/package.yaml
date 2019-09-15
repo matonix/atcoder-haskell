@@ -1,0 +1,28 @@
+source-dirs: .
+maintainer: automatonix@gmail.com
+ghc-options:
+- -threaded
+- -rtsopts
+- -with-rtsopts=-N
+dependencies:
+- vector
+- containers
+- array
+- base >= 4.7 && < 5
+name: abc139
+version: 0.1.0.0
+author: maton
+license: BSD3
+executables:
+  a:
+    source-dirs: a
+    main: Main.hs
+  d:
+    source-dirs: d
+    main: Main.hs
+  b:
+    source-dirs: b
+    main: Main.hs
+  c:
+    source-dirs: c
+    main: Main.hs
