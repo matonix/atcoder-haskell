@@ -81,7 +81,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "a"
 
 {-# START_FILE a/Makefile #-}
 .PHONY: Main
@@ -111,7 +110,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "b"
 
 {-# START_FILE b/Makefile #-}
 .PHONY: Main
@@ -141,7 +139,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "c"
 
 {-# START_FILE c/Makefile #-}
 .PHONY: Main
@@ -171,7 +168,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "d"
 
 {-# START_FILE d/Makefile #-}
 .PHONY: Main
@@ -201,7 +197,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "e"
 
 {-# START_FILE e/Makefile #-}
 .PHONY: Main
@@ -231,7 +226,6 @@ module Main where
 
 main :: IO ()
 main = do
-  putStrLn "f"
 
 {-# START_FILE f/Makefile #-}
 .PHONY: Main
