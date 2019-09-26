@@ -9,6 +9,14 @@ source-dirs: .
 
 dependencies:
 - base >= 4.7 && < 5
+- array
+- bytestring
+- containers
+- mtl
+- pretty
+- text
+- time
+- transformers
 
 ghc-options:
 - -threaded
@@ -28,13 +36,19 @@ executables:
   d:
     main:                Main.hs
     source-dirs:         d
+  e:
+    main:                Main.hs
+    source-dirs:         e
+  f:
+    main:                Main.hs
+    source-dirs:         f
 
 {-# START_FILE Setup.hs #-}
 import Distribution.Simple
 main = defaultMain
 
 {-# START_FILE Makefile #-}
-.PHONY: a b c d
+.PHONY: a b c d e f
 a:
 	cd a && make
 b:
@@ -43,17 +57,25 @@ c:
 	cd c && make
 d:
 	cd d && make
+e:
+	cd e && make
+f:
+	cd f && make
 
 clean:
 	cd a && make clean
 	cd b && make clean
 	cd c && make clean
 	cd d && make clean
+	cd e && make clean
+	cd f && make clean
 
 {-# START_FILE a/input1 #-}
 {-# START_FILE a/input2 #-}
+{-# START_FILE a/input3 #-}
 {-# START_FILE a/expect1 #-}
 {-# START_FILE a/expect2 #-}
+{-# START_FILE a/expect3 #-}
 {-# START_FILE a/Main.hs #-}
 module Main where
 
@@ -68,6 +90,8 @@ all: Main
 	diff expect1 output1
 	./Main < input2 > output2
 	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
@@ -78,8 +102,10 @@ clean:
 
 {-# START_FILE b/input1 #-}
 {-# START_FILE b/input2 #-}
+{-# START_FILE b/input3 #-}
 {-# START_FILE b/expect1 #-}
 {-# START_FILE b/expect2 #-}
+{-# START_FILE b/expect3 #-}
 {-# START_FILE b/Main.hs #-}
 module Main where
 
@@ -94,6 +120,8 @@ all: Main
 	diff expect1 output1
 	./Main < input2 > output2
 	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
@@ -104,8 +132,10 @@ clean:
 
 {-# START_FILE c/input1 #-}
 {-# START_FILE c/input2 #-}
+{-# START_FILE c/input3 #-}
 {-# START_FILE c/expect1 #-}
 {-# START_FILE c/expect2 #-}
+{-# START_FILE c/expect3 #-}
 {-# START_FILE c/Main.hs #-}
 module Main where
 
@@ -120,6 +150,8 @@ all: Main
 	diff expect1 output1
 	./Main < input2 > output2
 	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
@@ -130,8 +162,10 @@ clean:
 
 {-# START_FILE d/input1 #-}
 {-# START_FILE d/input2 #-}
+{-# START_FILE d/input3 #-}
 {-# START_FILE d/expect1 #-}
 {-# START_FILE d/expect2 #-}
+{-# START_FILE d/expect3 #-}
 {-# START_FILE d/Main.hs #-}
 module Main where
 
@@ -146,6 +180,68 @@ all: Main
 	diff expect1 output1
 	./Main < input2 > output2
 	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+.PHONY: clean
+clean:
+	rm -f Main output* Main.hi Main.o
+
+{-# START_FILE e/input1 #-}
+{-# START_FILE e/input2 #-}
+{-# START_FILE e/input3 #-}
+{-# START_FILE e/expect1 #-}
+{-# START_FILE e/expect2 #-}
+{-# START_FILE e/expect3 #-}
+{-# START_FILE e/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "e"
+
+{-# START_FILE e/Makefile #-}
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
+
+Main:
+	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
+
+.PHONY: clean
+clean:
+	rm -f Main output* Main.hi Main.o
+
+{-# START_FILE f/input1 #-}
+{-# START_FILE f/input2 #-}
+{-# START_FILE f/input3 #-}
+{-# START_FILE f/expect1 #-}
+{-# START_FILE f/expect2 #-}
+{-# START_FILE f/expect3 #-}
+{-# START_FILE f/Main.hs #-}
+module Main where
+
+main :: IO ()
+main = do
+  putStrLn "f"
+
+{-# START_FILE f/Makefile #-}
+.PHONY: Main
+all: Main
+	./Main < input1 > output1
+	diff expect1 output1
+	./Main < input2 > output2
+	diff expect2 output2
+	./Main < input3 > output3
+	diff expect3 output3
 
 Main:
 	stack ghc --resolver ghc-7.10.3 -- -O2 Main.hs
