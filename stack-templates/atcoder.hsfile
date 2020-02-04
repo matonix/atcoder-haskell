@@ -9,18 +9,49 @@ source-dirs: .
 
 dependencies:
 - base >= 4.7 && < 5
+# atcoder haskell resources
+# https://github.com/haskell-jp/atcoder-haskell-resources/blob/master/Import.hs
+- QuickCheck
 - array
+- attoparsec
 - bytestring
 - containers
+- deepseq
+- fgl
+- hashable
 - mtl
-- pretty
+- parallel
+- parsec
+- primitive
+- random
+- template-haskell
 - text
-- time
+- tf-random
 - transformers
+- unordered-containers
 - vector
+- extra
+- integer-logarithms
+- heaps
+- lens
+- massiv
+- mono-traversable
+- mutable-containers
+- mwc-random
+- psqueues
+- reflection
+- repa
+- unboxing-vector
+- utility-ht
+- vector-algorithms
+- vector-th-unbox
+# user specific package
+- hspec
+- main-tester
+- directory
 
 ghc-options:
-- -threaded
+# - -threaded
 - -rtsopts
 - -with-rtsopts=-N
 
@@ -44,32 +75,21 @@ executables:
     main:                Main.hs
     source-dirs:         f
 
+{-# START_FILE test.sh #-}
+#!/bin/bash
+if [[ "$1" =~ ^(a|b|c|d|e|f)$ ]]; then
+    contest=${PWD##*/}
+    # ghcid --command "stack ghci $contest:exe:$1" --test Test.main
+    # use ghci instead of ghcie, because current ghcie cannot use hDuplicate.
+    # see: https://github.com/ndmitchell/ghcid/issues/274
+    stack ghci $contest:exe:$1 --ghci-options "-e Test.main"
+else
+    echo "\"$1\" is not in the list"
+fi
+
 {-# START_FILE Setup.hs #-}
 import Distribution.Simple
 main = defaultMain
-
-{-# START_FILE Makefile #-}
-.PHONY: a b c d e f
-a:
-	cd a && make
-b:
-	cd b && make
-c:
-	cd c && make
-d:
-	cd d && make
-e:
-	cd e && make
-f:
-	cd f && make
-
-clean:
-	cd a && make clean
-	cd b && make clean
-	cd c && make clean
-	cd d && make clean
-	cd e && make clean
-	cd f && make clean
 
 {-# START_FILE a/input1 #-}
 {-# START_FILE a/input2 #-}
@@ -83,22 +103,39 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE a/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE a/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
+
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "a/input1"
+      expect <- BS.readFile "a/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "a/input2"
+      expect <- BS.readFile "a/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "a/input3"
+      expect <- BS.readFile "a/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
 
 {-# START_FILE b/input1 #-}
 {-# START_FILE b/input2 #-}
@@ -112,22 +149,39 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE b/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE b/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
+
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "b/input1"
+      expect <- BS.readFile "b/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "b/input2"
+      expect <- BS.readFile "b/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "b/input3"
+      expect <- BS.readFile "b/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
 
 {-# START_FILE c/input1 #-}
 {-# START_FILE c/input2 #-}
@@ -141,22 +195,39 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE c/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE c/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
+
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "c/input1"
+      expect <- BS.readFile "c/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "c/input2"
+      expect <- BS.readFile "c/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "c/input3"
+      expect <- BS.readFile "c/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
 
 {-# START_FILE d/input1 #-}
 {-# START_FILE d/input2 #-}
@@ -170,22 +241,39 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE d/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE d/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
+
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "d/input1"
+      expect <- BS.readFile "d/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "d/input2"
+      expect <- BS.readFile "d/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "d/input3"
+      expect <- BS.readFile "d/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
 
 {-# START_FILE e/input1 #-}
 {-# START_FILE e/input2 #-}
@@ -199,22 +287,39 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE e/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE e/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
+
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "e/input1"
+      expect <- BS.readFile "e/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "e/input2"
+      expect <- BS.readFile "e/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "e/input3"
+      expect <- BS.readFile "e/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
 
 {-# START_FILE f/input1 #-}
 {-# START_FILE f/input2 #-}
@@ -228,20 +333,36 @@ module Main where
 main :: IO ()
 main = do
 
-{-# START_FILE f/Makefile #-}
-.PHONY: Main
-all: Main
-	./Main < input1 > output1
-	diff expect1 output1 || exit 0
-	./Main < input2 > output2
-	diff expect2 output2 || exit 0
-	./Main < input3 > output3
-	diff expect3 output3 || exit 0
+{-# START_FILE f/Test.hs #-}
+{- HLINT ignore "Redundant do" -}
+module Test where
 
-Main:
-	stack ghc --resolver lts-6.35 -- -O2 Main.hs
+import qualified Main                          as M
+import           Data.ByteString.Char8          ( ByteString )
+import qualified Data.ByteString.Char8         as BS
+import           Test.Hspec
+import           Test.Main
 
-.PHONY: clean
-clean:
-	rm -f Main output* Main.hi Main.o
+captureIO :: IO () -> ByteString -> IO ByteString
+captureIO f input = prStdout <$> captureProcessResult (withStdin input f)
 
+main :: IO ()
+main = hspec $ do
+  describe "main" $ do
+    it "input1" $ do
+      input  <- BS.readFile "f/input1"
+      expect <- BS.readFile "f/expect1"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input2" $ do
+      input  <- BS.readFile "f/input2"
+      expect <- BS.readFile "f/expect2"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
+    it "input3" $ do
+      input  <- BS.readFile "f/input3"
+      expect <- BS.readFile "f/expect3"
+      output <- captureIO M.main input
+      output `shouldBe` expect
