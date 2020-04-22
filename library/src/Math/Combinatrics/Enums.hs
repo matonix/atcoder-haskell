@@ -22,3 +22,10 @@ combs ns size = comb' size [(ns, [])]
   comb' c xs = comb' (c - 1) $ concatMap comb'' xs
   comb'' (x : xs, ys) = (xs, ys ++ [x]) : comb'' (xs, ys)
   comb'' _            = []
+
+-- https://rosettacode.org/wiki/Combinations_with_repetitions#Dynamic_Programming
+combsWithRep :: [a] -> Int -> [[a]]
+combsWithRep xs k = combsBySize xs !! k
+ where
+  combsBySize = foldr f ([[]] : repeat [])
+  f x = scanl1 $ (++) . map (x :)
