@@ -36,3 +36,9 @@ fastpow :: Integer -> Integer -> Integer -> Integer
 fastpow base exponents modulo = fastpow' (base `mod` modulo) exponents modulo 1
   where fastpow' _ 0 _ !r = r
         fastpow' b e m r = fastpow' (b * b `mod` m) (e `div` 2) m (if even e then r else r * b `mod` m)
+
+productMod :: [Int64] -> Int64
+productMod = foldr (*%) 1
+
+sumMod :: [Int64] -> Int64
+sumMod = foldr (+%) 0
