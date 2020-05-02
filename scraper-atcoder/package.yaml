@@ -33,6 +33,7 @@ dependencies:
 - xml-lens
 - lens
 - makefile
+- webdriver
 
 ghc-options:
 - -Wall

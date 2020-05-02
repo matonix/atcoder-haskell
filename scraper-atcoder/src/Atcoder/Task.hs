@@ -4,17 +4,19 @@ module Atcoder.Task
   , createTasks
   , getTasks
   , Task(..)
-  ) where
+  )
+where
 
-import RIO hiding (to)
-import RIO.List
-import RIO.List.Partial
-import qualified RIO.Text as T
-import Text.XML (Document)
-import Text.XML.Lens hiding ((<.>), name)
-import qualified Network.HTTP.Simple as H
-import qualified Text.HTML.DOM as DOM
-import Util
+import           RIO                     hiding ( to )
+import           RIO.List.Partial
+import qualified RIO.Text                      as T
+import           Text.XML                       ( Document )
+import           Text.XML.Lens           hiding ( (<.>)
+                                                , name
+                                                )
+import qualified Network.HTTP.Simple           as H
+import qualified Text.HTML.DOM                 as DOM
+import           Util
 
 data Task = Task
   { taskName :: Text
@@ -24,10 +26,7 @@ data Task = Task
 -- * Exported Functions
 
 createTasksWithAuth
-  :: Maybe ByteString
-  -> Maybe ByteString
-  -> String
-  -> IO [Task]
+  :: Maybe ByteString -> Maybe ByteString -> String -> IO [Task]
 createTasksWithAuth (Just username) (Just password) tasksUrl = do
   req <- H.parseRequest tasksUrl
   let req' = H.setRequestBasicAuth username password req
@@ -47,26 +46,26 @@ getTasks = dropCommonPrefix . map makeTask . docToUrls
 -- * Unexported Functions
 
 docToUrls :: Document -> [Text]
-docToUrls doc = doc
-  ^.. root
-  . entire
-  ./ attributeIs "class" "table table-bordered table-striped"
-  ./ el "tbody"
-  ./ el "tr"
-  ./ attributeIs "class" "text-center no-break"
-  ./ attr "href"
+docToUrls doc =
+  doc
+    ^.. root
+    .   entire
+    ./  attributeIs "class" "table table-bordered table-striped"
+    ./  el "tbody"
+    ./  el "tr"
+    ./  attributeIs "class" "text-center no-break"
+    ./  attr "href"
 
 makeTask :: Text -> Task
-makeTask relPath = Task
-  (tgetFinalPart relPath)
-  ("https://atcoder.jp" ++ T.unpack relPath)
+makeTask relPath =
+  Task (tgetFinalPart relPath) ("https://atcoder.jp" ++ T.unpack relPath)
 
 dropCommonPrefix :: [Task] -> [Task]
 dropCommonPrefix tasks = zipWith Task suffixes $ map taskUrl tasks
-  where
-    suffixes = go $ map (T.unpack . taskName) tasks
-    go [] = []
-    go tss'@(ts : tss)
-      | any ((< 2) . length) tss' = map T.pack tss'
-      | any (/= head ts) (map head tss) = map T.pack tss'
-      | otherwise = go $ tail ts : map tail tss
+ where
+  suffixes = go $ map (T.unpack . taskName) tasks
+  go [] = []
+  go tss'@(ts : tss) | any ((< 2) . length) tss' = map T.pack tss'
+                     | any (/= head ts) (map head tss) = map T.pack tss'
+                     | otherwise = go $ tail ts : map tail tss
+

@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Atcoder.Example
   ( readExamples
-  , createExamplesWithAuth
   , createExamples
   , getExamples
   , writeExamples
@@ -27,18 +26,6 @@ data Example = Example
 readExamples :: FilePath -> IO [Example]
 readExamples filepath = getExamplesLocal <$> DOM.readFile filepath
 
-createExamplesWithAuth
-  :: Maybe ByteString
-  -> Maybe ByteString
-  -> String
-  -> IO [Example]
-createExamplesWithAuth (Just username) (Just password) examplesUrl = do
-  req <- H.parseRequest examplesUrl
-  let req' = H.setRequestBasicAuth username password req
-  res <- H.httpLBS req'
-  return $ getExamples $ DOM.parseLBS $ H.getResponseBody res
-createExamplesWithAuth _ _ examplesUrl = createExamples examplesUrl
-
 createExamples :: String -> IO [Example]
 createExamples url = do
   req <- H.parseRequest url
@@ -54,8 +41,8 @@ getExamplesLocal = makeExample . makePairs . map toLF . docToTexts
 writeExamples :: FilePath -> [Example] -> IO [(FilePath, FilePath)]
 writeExamples fp es = forM (zip [(1::Int)..] es) $
   \(n, Example i e) -> do
-    let iFile = fp </> show n <.> "input"
-    let eFile = fp </> show n <.> "expect"
+    let iFile = fp </> "input" ++ show n
+    let eFile = fp </> "expect" ++ show n
     writeFileUtf8 iFile i
     writeFileUtf8 eFile e
     return (iFile, eFile)

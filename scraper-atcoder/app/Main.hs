@@ -14,41 +14,29 @@ main = do
     "The scraper for atcoder"
     ""
     (Options
-      <$> switch 
+      <$> switch
         ( long "verbose"
         <> short 'v'
         <> help "Verbose output?"
         )
-      <*> (optional $ strOption 
+      <*> strOption
         ( long "contest"
         <> short 'c'
         <> help "Contest name"
         <> metavar "CONTEST_NAME"
-        ))
-      <*> (optional $ option (str >>= parseStringList) 
-        ( long "files"
-        <> short 'f'
-        <> help "Problem HTML files"
-        <> metavar "\"TASK1_FILEPATH ...\""
-        ))
-      <*> (optional $ strOption 
-        ( long "url"
-        <> short 'r'
-        <> help "Problem URL"
-        <> metavar "URL" 
-        ))
-      <*> (optional $ strOption
+        )
+      <*> strOption
         ( long "username"
         <> short 'u'
         <> help "Username"
         <> metavar "USERNAME"
-        ))
-      <*> (optional $ strOption
+        )
+      <*> strOption
         ( long "password"
         <> short 'p'
         <> help "Password"
         <> metavar "PASSWORD"
-        )))
+        ))
     empty
   lo <- logOptionsHandle stderr (optionsVerbose options)
   pc <- mkDefaultProcessContext
@@ -59,6 +47,3 @@ main = do
           , appOptions = options
           }
      in runRIO app run
-
-parseStringList :: Monad m => String -> m [String]
-parseStringList = return . words

@@ -6,11 +6,9 @@ import RIO.Process
 -- | Command line arguments
 data Options = Options
   { optionsVerbose :: Bool
-  , contest :: Maybe String
-  , files :: Maybe [String]
-  , url :: Maybe String
-  , username :: Maybe ByteString
-  , password :: Maybe ByteString
+  , contest :: String
+  , username :: Text
+  , password :: Text
   }
 
 data App = App
