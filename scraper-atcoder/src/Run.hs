@@ -24,6 +24,8 @@ run = do
   forM_ files $ \(fileName, content) -> do
     logInfo $ "  Create : " <> fromString fileName
     liftIO $ writeFileBinary (contestPath </> fileName) content
+  packageContent <- liftIO $ createPackage contest
+  liftIO $ writeFileUtf8 (contestPath </> "package.yaml") packageContent
   logInfo $ "Copy project files done."
 
   let tasksUrl = baseUrl </> contest </> "tasks"

@@ -4,6 +4,7 @@ module Atcoder.Resource
   ( files
   , templates
   , createTestCase
+  , createPackage
   , lookupFiles
   )
 where
@@ -22,6 +23,14 @@ instance ToMustache TestCase where
   toMustache testCase =
     object ["task" ~> task testCase, "example" ~> example testCase]
 
+newtype Package = Package
+  { contest :: Text
+  }
+
+instance ToMustache Package where
+  toMustache package =
+    object ["contest" ~> contest package]
+
 files :: [(FilePath, ByteString)]
 files = $(embedDir "resources/files")
 
@@ -36,6 +45,15 @@ createTestCase taskId exampleId = do
   case compileTemplate testFileName testTemplate of
     Left  parseError -> fail $ "createTestCase: " ++ show parseError
     Right template   -> return $ substitute template testCase
+
+createPackage :: String -> IO Text
+createPackage contestId = do
+  let pakcage = Package (T.pack contestId)
+  let packageFileName = "package.yaml.mustache"
+  packageTemplate <- lookupFiles packageFileName templates
+  case compileTemplate packageFileName packageTemplate of
+    Left  parseError -> fail $ "createPackage: " ++ show parseError
+    Right template   -> return $ substitute template pakcage
 
 lookupFiles :: FilePath -> [(FilePath, ByteString)] -> IO Text
 lookupFiles key dict = case lookup key dict of
