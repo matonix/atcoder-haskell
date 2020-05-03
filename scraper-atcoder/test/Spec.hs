@@ -2,7 +2,7 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Control.Monad
+import RIO
 import RIO.Directory
 import RIO.FilePath
 import qualified RIO.ByteString.Lazy as BL
@@ -10,7 +10,6 @@ import qualified Network.HTTP.Simple as H
 import qualified Text.HTML.DOM as DOM
 import Atcoder.Example
 import Atcoder.Task
-import Util
 
 main :: IO ()
 main = defaultMain =<< tests
@@ -35,20 +34,20 @@ taskTest = do
   doc <- DOM.readFile tasksHtml
   return $ testCase "read tasks in contests"
     $ getTasks doc @?=
-      [ Task "abc117_a" "https://atcoder.jp/contests/abc117/tasks/abc117_a"
-      , Task "abc117_b" "https://atcoder.jp/contests/abc117/tasks/abc117_b"
-      , Task "abc117_c" "https://atcoder.jp/contests/abc117/tasks/abc117_c"
-      , Task "abc117_d" "https://atcoder.jp/contests/abc117/tasks/abc117_d"
+      [ Task "a" "https://atcoder.jp/contests/abc117/tasks/abc117_a"
+      , Task "b" "https://atcoder.jp/contests/abc117/tasks/abc117_b"
+      , Task "c" "https://atcoder.jp/contests/abc117/tasks/abc117_c"
+      , Task "d" "https://atcoder.jp/contests/abc117/tasks/abc117_d"
       ]
 
 exampleTest :: IO TestTree
 exampleTest = do
-  let taskUrl = "https://atcoder.jp/contests/abs/tasks/abc086_a"
+  let taskUrlOne = "https://atcoder.jp/contests/abs/tasks/abc086_a"
   let taskHtml = "test" </> "resources"
-        </> getFinalPart taskUrl <.> "html"
+        </> getFinalPart taskUrlOne <.> "html"
   p <- doesFileExist taskHtml
   unless p $ do
-    req <- H.parseRequest taskUrl
+    req <- H.parseRequest taskUrlOne
     res <- H.httpLBS req
     BL.writeFile taskHtml $ H.getResponseBody res
   doc <- DOM.readFile taskHtml

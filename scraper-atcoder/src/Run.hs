@@ -1,77 +1,53 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
-module Run (run) where
+module Run
+  ( run
+  )
+where
 
-import Data.Monoid
-import RIO.Directory
-import RIO.FilePath
-import qualified RIO.Text as T
-import Import
-import Util
+import           RIO
+import           RIO.Directory
+import           RIO.FilePath
+import qualified RIO.Text                      as T
+import           Import
 
 run :: RIO App ()
 run = do
-  Options{..} <- appOptions <$> ask
-  -- align actions and run first action
-  fromFirst (logError "no option")
-    $ First (fmap runByURL url)
-    <> First (fmap runByFiles files)
-
-runByFiles :: [String] -> RIO App ()
-runByFiles taskHtmlPaths = do
-  contestName <- fromMaybe "noname" . contest . appOptions <$> ask
-  logInfo $ "Create contest directory: " <> fromString contestName
+  let baseUrl = "https://atcoder.jp/contests"
+  Options {..} <- appOptions <$> ask
+  logInfo $ "Create contest directory: " <> fromString contest
   cwd <- liftIO $ getCurrentDirectory
-  let contestPath = cwd </> contestName
+
+  let contestPath = cwd </> contest
   liftIO $ createDirectory contestPath
-  taskNames <- forM taskHtmlPaths $ \taskHtmlPath -> do
-    let taskName = takeBaseName taskHtmlPath
+  logInfo $ "Copy project files"
+  forM_ files $ \(fileName, content) -> do
+    logInfo $ "  Create : " <> fromString fileName
+    liftIO $ writeFileBinary (contestPath </> fileName) content
+  packageContent <- liftIO $ createPackage contest
+  liftIO $ writeFileUtf8 (contestPath </> "package.yaml") packageContent
+  logInfo $ "Copy project files done."
+
+  let tasksUrl = baseUrl </> contest </> "tasks"
+  tasksAndExamples <- liftIO $ runScraper username password tasksUrl
+  forM_ tasksAndExamples $ \(Task taskName _, examples) -> do
     logInfo $ "  Create task directory: " <> fromString taskName
     let taskPath = contestPath </> taskName
     liftIO $ createDirectory taskPath
-    logInfo "    Create empty Main.hs"
-    liftIO $ writeFileUtf8 (taskPath </> "Main.hs") emptyMain
-    logInfo "    Create examples"
-    logInfo $ "      Read " <> fromString taskHtmlPath
-    examples <- liftIO $ readExamples taskHtmlPath
-    logInfo $ "      Examples is here: " <> fromString (show examples)
-    result <- liftIO $ writeExamples taskPath examples
-    logInfo $ "      Wrote in: " <> fromString (show result)
-    logInfo "    Create Makefile"
-    liftIO $ writeMakefile (taskPath </> "Makefile") (taskMakefile $ length examples)
-    logInfo $ "Create contest directory: " <> fromString contestName
-    return $ fromString taskName
-  logInfo "Create Makefile for all tasks"
-  liftIO $ writeMakefile (contestPath </> "Makefile") (tasksMakefile taskNames)
-  logInfo "Done."
 
+    logInfo "    Create Main.hs"
+    mainFile <- liftIO $ lookupFiles "Main.hs" templates
+    liftIO $ writeFileUtf8 (taskPath </> "Main.hs") mainFile
 
-runByURL :: String -> RIO App ()
-runByURL contestUrl = do
-  let contestName = getFinalPart contestUrl
-  logInfo $ "Create contest directory: " <> fromString contestName
-  cwd <- liftIO $ getCurrentDirectory
-  maybeUsername <- username . appOptions <$> ask
-  maybePassword <- password . appOptions <$> ask
-  let contestPath = cwd </> contestName
-  liftIO $ createDirectory contestPath
-  let tasksUrl = contestUrl </> "tasks"
-  tasks <- liftIO $ createTasksWithAuth maybeUsername maybePassword tasksUrl
-  forM_ tasks $ \(Task taskName taskUrl) -> do
-    logInfo $ "  Create task directory: " <> display taskName
-    let taskPath = contestPath </> T.unpack taskName
-    liftIO $ createDirectory taskPath
-    logInfo "    Create empty Main.hs"
-    liftIO $ writeFileUtf8 (taskPath </> "Main.hs") emptyMain
+    logInfo "    Create Test.hs"
+    testPartial <- liftIO $ lookupFiles "Test.hs" templates
+    testCases <- liftIO $ mapM (createTestCase taskName) [1 .. length examples]
+    let testFile = testPartial `T.append` T.concat testCases
+    liftIO $ writeFileUtf8 (taskPath </> "Test.hs") testFile
+
     logInfo "    Create examples"
-    logDebug $ "      Read " <> fromString taskUrl
-    examples <- liftIO $ createExamplesWithAuth maybeUsername maybePassword taskUrl
-    logDebug $ "      Examples is here: " <> fromString (show examples)
+    logDebug $ "      Examples is here: " <> displayShow examples
     result <- liftIO $ writeExamples taskPath examples
-    logDebug $ "      Wrote in: " <> fromString (show result)
-    logInfo "    Create Makefile"
-    liftIO $ writeMakefile (taskPath </> "Makefile") (taskMakefile $ length examples)
-    logInfo $ "Create contest directory: " <> fromString contestName
-  logInfo "Create Makefile for all tasks"
-  liftIO $ writeMakefile (contestPath </> "Makefile") (tasksMakefile $ map taskName tasks)
+    logDebug $ "      Wrote in: " <> displayShow result
+
   logInfo "Done."

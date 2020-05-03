@@ -32,7 +32,9 @@ dependencies:
 - xml-conduit
 - xml-lens
 - lens
-- makefile
+- webdriver
+- file-embed
+- mustache
 
 ghc-options:
 - -Wall

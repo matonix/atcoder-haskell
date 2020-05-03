@@ -3,3 +3,6 @@
 *.swp
 tarballs/
 .stack-work/
+
+chromedriver
+selenium-server-standalone*
