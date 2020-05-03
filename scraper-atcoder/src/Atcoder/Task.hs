@@ -3,6 +3,7 @@ module Atcoder.Task
   ( createTasksWithAuth
   , createTasks
   , getTasks
+  , getFinalPart
   , Task(..)
   )
 where
@@ -16,10 +17,9 @@ import           Text.XML.Lens           hiding ( (<.>)
                                                 )
 import qualified Network.HTTP.Simple           as H
 import qualified Text.HTML.DOM                 as DOM
-import           Util
 
 data Task = Task
-  { taskName :: Text
+  { taskName :: String
   , taskUrl :: String
   } deriving (Show, Eq)
 
@@ -57,15 +57,17 @@ docToUrls doc =
     ./  attr "href"
 
 makeTask :: Text -> Task
-makeTask relPath =
-  Task (tgetFinalPart relPath) ("https://atcoder.jp" ++ T.unpack relPath)
+makeTask relPath = let rp = T.unpack relPath in
+  Task (getFinalPart rp) ("https://atcoder.jp" ++ rp)
 
 dropCommonPrefix :: [Task] -> [Task]
 dropCommonPrefix tasks = zipWith Task suffixes $ map taskUrl tasks
  where
-  suffixes = go $ map (T.unpack . taskName) tasks
+  suffixes = go $ map taskName tasks
   go [] = []
-  go tss'@(ts : tss) | any ((< 2) . length) tss' = map T.pack tss'
-                     | any (/= head ts) (map head tss) = map T.pack tss'
+  go tss'@(ts : tss) | any ((< 2) . length) tss' = tss'
+                     | any (/= head ts) (map head tss) = tss'
                      | otherwise = go $ tail ts : map tail tss
 
+getFinalPart :: String -> String
+getFinalPart = reverse . takeWhile (/='/') . reverse

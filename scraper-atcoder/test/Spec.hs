@@ -10,7 +10,6 @@ import qualified Network.HTTP.Simple as H
 import qualified Text.HTML.DOM as DOM
 import Atcoder.Example
 import Atcoder.Task
-import Util
 
 main :: IO ()
 main = defaultMain =<< tests

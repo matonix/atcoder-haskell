@@ -1,0 +1,6 @@
+    it "input{{example}}" $ do
+      input  <- BS.readFile "{{task}}/input{{example}}"
+      expect <- BS.readFile "{{task}}/expect{{example}}"
+      output <- captureIO M.main input
+      output `shouldBe` expect
+
