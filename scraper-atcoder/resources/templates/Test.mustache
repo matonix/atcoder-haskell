@@ -2,5 +2,6 @@
       input  <- BS.readFile "{{task}}/input{{example}}"
       expect <- BS.readFile "{{task}}/expect{{example}}"
       output <- captureIO M.main input
-      output `shouldBe` expect
+      prException output `shouldSatisfy` isNothing
+      prStdout output `shouldBe` expect
 
