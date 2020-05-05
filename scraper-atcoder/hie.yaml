@@ -1,2 +1,8 @@
 cradle:
   stack:
+    - path: ./test
+      component: "scraper-atcoder:test:scraper-atcoder-test"
+    - path: ./src
+      component: "scraper-atcoder:lib"
+    - path: ./app
+      component: "scraper-atcoder:exe"

@@ -3,13 +3,11 @@ module Atcoder.Task
   ( createTasksWithAuth
   , createTasks
   , getTasks
-  , getFinalPart
   , Task(..)
   )
 where
 
 import           RIO                     hiding ( to )
-import           RIO.List.Partial
 import qualified RIO.Text                      as T
 import           Text.XML                       ( Document )
 import           Text.XML.Lens           hiding ( (<.>)
@@ -41,12 +39,12 @@ createTasks tasksUrl = do
   return $ getTasks $ DOM.parseLBS $ H.getResponseBody res
 
 getTasks :: Document -> [Task]
-getTasks = dropCommonPrefix . map makeTask . docToUrls
+getTasks = uncurry (zipWith Task) . (docToNames &&& docToUrls)
 
 -- * Unexported Functions
 
-docToUrls :: Document -> [Text]
-docToUrls doc =
+docToUrls :: Document -> [String]
+docToUrls doc = 
   doc
     ^.. root
     .   entire
@@ -55,19 +53,18 @@ docToUrls doc =
     ./  el "tr"
     ./  attributeIs "class" "text-center no-break"
     ./  attr "href"
+    . to (T.append "https://atcoder.jp")
+    . to T.unpack
 
-makeTask :: Text -> Task
-makeTask relPath = let rp = T.unpack relPath in
-  Task (getFinalPart rp) ("https://atcoder.jp" ++ rp)
-
-dropCommonPrefix :: [Task] -> [Task]
-dropCommonPrefix tasks = zipWith Task suffixes $ map taskUrl tasks
- where
-  suffixes = go $ map taskName tasks
-  go [] = []
-  go tss'@(ts : tss) | any ((< 2) . length) tss' = tss'
-                     | any (/= head ts) (map head tss) = tss'
-                     | otherwise = go $ tail ts : map tail tss
-
-getFinalPart :: String -> String
-getFinalPart = reverse . takeWhile (/='/') . reverse
+docToNames :: Document -> [String]
+docToNames doc =
+  doc
+    ^.. root
+    .   entire
+    ./  attributeIs "class" "table table-bordered table-striped"
+    ./  el "tbody"
+    ./  el "tr"
+    ./  attributeIs "class" "text-center no-break"
+    ./  text
+    . to T.toLower
+    . to T.unpack
