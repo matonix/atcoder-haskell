@@ -24,7 +24,7 @@ data Example = Example
 -- * Exported Functions
 
 readExamples :: FilePath -> IO [Example]
-readExamples filepath = getExamplesLocal <$> DOM.readFile filepath
+readExamples filepath = getExamples <$> DOM.readFile filepath
 
 createExamples :: String -> IO [Example]
 createExamples url = do
@@ -34,9 +34,6 @@ createExamples url = do
 
 getExamples :: Document -> [Example]
 getExamples = makeExample . makePairs . map toLF . docToTexts
-
-getExamplesLocal :: Document -> [Example]
-getExamplesLocal = makeExample . makePairs . map toLF . docToTexts
 
 writeExamples :: FilePath -> [Example] -> IO [(FilePath, FilePath)]
 writeExamples fp es = forM (zip [(1::Int)..] es) $
@@ -53,7 +50,12 @@ writeExamples_ fp = void . writeExamples fp
 -- * Unexported Functions
 
 docToTexts :: Document -> [Text]
-docToTexts doc = doc
+docToTexts doc = 
+  let t = docToTextsMultiLang doc
+  in if null t then docToTextsSingleLang doc else t
+
+docToTextsMultiLang :: Document -> [Text]
+docToTextsMultiLang doc = doc
   ^.. root
   . entire
   ./ attributeIs "class" "lang-ja"
@@ -62,13 +64,21 @@ docToTexts doc = doc
   ./ (el "h3" <> el "pre")
   . text
 
+docToTextsSingleLang :: Document -> [Text]
+docToTextsSingleLang doc = doc
+  ^.. root
+  . entire
+  ./ el "section"
+  ./ (el "h3" <> el "pre")
+  . text
+
 toLF :: Text -> Text
 toLF = T.filter (/= '\r')
 
 makePairs :: [Text] -> [(Text, Text)]
-makePairs = toPair . dropWhile isInput1
+makePairs = toPair . map T.stripStart . dropWhile isNotInput1
   where
-    isInput1 = maybe False ((/= '1') . fst) . T.uncons . T.stripStart . T.reverse
+    isNotInput1 = maybe False ((/= '1') . fst) . T.uncons . T.reverse
     toPair [] = []
     toPair [_] = []
     toPair (x : y : xs) = (x, y) : toPair xs
