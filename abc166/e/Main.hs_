@@ -1,0 +1,24 @@
+{-# LANGUAGE TypeApplications #-}
+module Main where
+import qualified Data.ByteString.Char8         as BS
+import qualified Data.ByteString.Lazy.Char8    as BSL
+import qualified Data.ByteString.Builder       as BSB
+import           Data.Char                      ( isSpace )
+import           Data.List                      
+
+main :: IO ()
+main = do
+  n <- readLn @Int
+  as <- unfoldr (BS.readInt . BS.dropWhile isSpace) <$> BS.getLine
+  let iMinusAi = sortGroup $ zipWith (-) [1..n] as
+  let jPlusAj = sortGroup $ zipWith (+) [1..n] as
+  print $ go 0 iMinusAi jPlusAj
+  where
+    go cnt [] _ = cnt
+    go cnt _ [] = cnt
+    go cnt xs'@((i, x):xs) ys'@((j, y):ys)
+      | i < j = go cnt xs ys'
+      | i > j = go cnt xs' ys
+      | otherwise = go (cnt + x * y) xs ys
+
+sortGroup = map (\t -> (head t,length t)) . group . sort

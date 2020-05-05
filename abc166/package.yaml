@@ -1,7 +1,10 @@
-name: library
-version: '0.1.0'
-author: maton
-maintainer: automatonix@gmail.com
+name:                abc166
+version:             0.1.0.0
+license:             BSD3
+author:              maton
+maintainer:          automatonix@gmail.com
+
+source-dirs: .
 
 dependencies:
 - base >= 4.7 && < 5
@@ -45,21 +48,28 @@ dependencies:
 - hspec
 - main-tester
 - directory
-- hspec-discover
 
 ghc-options:
-- -Wall
-- -threaded
+# - -threaded
 - -rtsopts
 - -with-rtsopts=-N
 
-library:
-  source-dirs: src
-
-tests:
-  library-test:
-    main: Spec.hs
-    source-dirs: test
-    dependencies:
-    - library
-    - hspec
+executables:
+  a:
+    main:                Main.hs
+    source-dirs:         a
+  b:
+    main:                Main.hs
+    source-dirs:         b
+  c:
+    main:                Main.hs
+    source-dirs:         c
+  d:
+    main:                Main.hs
+    source-dirs:         d
+  e:
+    main:                Main.hs
+    source-dirs:         e
+  f:
+    main:                Main.hs
+    source-dirs:         f

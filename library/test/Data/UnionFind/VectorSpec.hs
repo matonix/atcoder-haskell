@@ -7,6 +7,8 @@ import Test.Hspec
 main :: IO ()
 main = hspec spec
 
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 spec :: Spec
 spec = do
   describe "initUf" $ do
