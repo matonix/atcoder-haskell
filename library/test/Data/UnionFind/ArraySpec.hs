@@ -7,10 +7,12 @@ import Test.Hspec
 main :: IO ()
 main = hspec spec
 
+{-# ANN module "HLint: ignore Redundant do" #-}
+
 spec :: Spec
 spec = do
   describe "initUf" $ do
-    it "initial parent of 3rd item should be 3" $ do
+    it "initial parent of 3rd item should be 3" $
       pick3rd `shouldReturn` 3
   describe "uniteUf" $ do
     it "size of united 3 item should be 3" $ do
