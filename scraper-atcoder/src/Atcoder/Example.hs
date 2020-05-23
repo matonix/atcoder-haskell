@@ -69,7 +69,7 @@ docToTextsSingleLang doc = doc
   ^.. root
   . entire
   ./ el "section"
-  ./ (el "h3" <> el "pre")
+  ./ (el "h3" <> attributeIs "class" "source-code-for-copy")
   . text
 
 toLF :: Text -> Text
@@ -78,7 +78,7 @@ toLF = T.filter (/= '\r')
 makePairs :: [Text] -> [(Text, Text)]
 makePairs = toPair . map T.stripStart . dropWhile isNotInput1
   where
-    isNotInput1 = maybe False ((/= '1') . fst) . T.uncons . T.reverse
+    isNotInput1 = maybe False ((/= '1') . fst) . T.uncons . T.stripStart . T.reverse
     toPair [] = []
     toPair [_] = []
     toPair (x : y : xs) = (x, y) : toPair xs
