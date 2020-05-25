@@ -1,0 +1,75 @@
+name:                agc044
+version:             0.1.0.0
+license:             BSD3
+author:              maton
+maintainer:          automatonix@gmail.com
+
+source-dirs: .
+
+dependencies:
+- base >= 4.7 && < 5
+# atcoder haskell resources
+# https://github.com/haskell-jp/atcoder-haskell-resources/blob/master/Import.hs
+- QuickCheck
+- array
+- attoparsec
+- bytestring
+- containers
+- deepseq
+- fgl
+- hashable
+- mtl
+- parallel
+- parsec
+- primitive
+- random
+- template-haskell
+- text
+- tf-random
+- transformers
+- unordered-containers
+- vector
+- extra
+- integer-logarithms
+- heaps
+- lens
+- massiv
+- mono-traversable
+- mutable-containers
+- mwc-random
+- psqueues
+- reflection
+- repa
+- unboxing-vector
+- utility-ht
+- vector-algorithms
+- vector-th-unbox
+# user specific package
+- hspec
+- main-tester
+- directory
+
+ghc-options:
+# - -threaded
+- -rtsopts
+- -with-rtsopts=-N
+
+executables:
+  a:
+    main:                Main.hs
+    source-dirs:         a
+  b:
+    main:                Main.hs
+    source-dirs:         b
+  c:
+    main:                Main.hs
+    source-dirs:         c
+  d:
+    main:                Main.hs
+    source-dirs:         d
+  e:
+    main:                Main.hs
+    source-dirs:         e
+  f:
+    main:                Main.hs
+    source-dirs:         f
