@@ -1,7 +1,7 @@
 -- O(n log n) multiply polynomials by Cooley-Tukey FFT （Mutable Vector)
 -- 448 ms in atc001-c
 -- cf. http://wwwa.pikara.ne.jp/okojisan/stockham/cooley-tukey.html
-module FFT where
+module Math.Algorithms.FFT where
 
 import qualified Data.Vector.Unboxed           as VU
 import qualified Data.Vector.Unboxed.Mutable   as VUM
