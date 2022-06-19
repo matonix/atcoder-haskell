@@ -4,8 +4,16 @@ module Math.Numbers.Modulo where
 import           Data.Int
 import           Data.Ratio
 
--- DO NOT use constructor directry, instead: toM 
+-- DO NOT use constructor directly, use toM instead
 newtype MInt = M { unM :: Int64 } deriving (Show, Eq, Ord)
+
+-- If you need Unbox MInt instance, uncomment following code 
+-- and use Data.Vector.Unboxing(.Mutable)
+
+-- import qualified Data.Vector.Unboxing as VU
+-- import qualified Data.Vector.Unboxing.Mutable   as VUM
+-- instance VU.Unboxable MInt where
+--   type Rep MInt = Int64
 
 modNum :: Int64
 modNum = 1000000007

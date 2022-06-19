@@ -25,6 +25,8 @@ sieve n = VU.create $ do
     when b $ forM_ [2 * i, 3 * i .. n] $ \j -> VUM.write vec j False
   return vec
 
+-- Usage
+
 sieveSample :: IO ()
 sieveSample = do
   let t = sieve 100

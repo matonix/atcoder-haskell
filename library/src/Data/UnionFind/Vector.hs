@@ -1,7 +1,7 @@
 module Data.UnionFind.Vector where
 
-import           Data.Vector.Unboxed.Mutable   as VUM
-import           Data.Vector.Unboxed           as VU
+import qualified Data.Vector.Unboxed.Mutable   as VUM
+import qualified Data.Vector.Unboxed           as VU
 import           Control.Monad.Primitive
 
 data UnionFind s = UnionFind

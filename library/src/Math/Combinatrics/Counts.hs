@@ -9,6 +9,8 @@ binos n k = bino' n (if k * 2 <= n then k else n - k) where
   bino' 0  _  = 0
   bino' n' k' = binos (n' - 1) (k' - 1) * n' `div` k'
 
+-- TODO: Multinomial coefficient
+
 -- nHk : multiset coefficients
 multisetCoefficient :: Integral a => a -> a -> a
 multisetCoefficient n k = binos (n + k - 1) k

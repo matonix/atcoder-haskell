@@ -1,3 +1,6 @@
+-- Note: if you use this for same array (e.g. multiply xs xs),
+-- consider "cumulative sum" algorithm.
+
 -- O(n log n) multiply polynomials by Cooley-Tukey FFT （Mutable Vector)
 -- 448 ms in atc001-c
 -- cf. http://wwwa.pikara.ne.jp/okojisan/stockham/cooley-tukey.html
